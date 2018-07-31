@@ -4,7 +4,7 @@
 # Maintainer: Pawel Cygal 
 # email: destine@poczta.fm
 # date: 2018-05-01
-# description: this script performe backup of docker containers and docker volumes
+# description: this script perform backup of docker containers and docker volumes
 #####################################################################################
 
 config_file_path="docker-backup.cfg"
