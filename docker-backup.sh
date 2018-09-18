@@ -1,7 +1,7 @@
 #!/bin/bash
 #####################################################################################
 # Author: Pawel Cygal
-# Maintainer: Pawel Cygal 
+# Maintainer: Pawel Cygal
 # email: destine@poczta.fm
 # date: 2018-05-01
 # description: this script perform backup of docker containers and docker volumes
@@ -62,9 +62,10 @@ function backup_images(){
         container_name="${i}"
         _nice_output "Container Name: ${container_name} - "
         container_image=$(docker inspect --format='{{.Config.Image}}' "${container_name}")
+        container_image_wos=$(echo ${container_image} | sed 's/\//-/g')
         _nice_output "Started From Image: ${container_image} -"
         mkdir -p "${backup_path}/${container_image}"
-        save_file="${backup_path}/${container_image}/${container_image}.tar"
+        save_file="${backup_path}/${container_image}/${container_image_wos}.tar"
 
         if docker save -o "${save_file}" "${container_image}"; then
             exec 3>&1 # save stdout as fd 3
@@ -90,10 +91,11 @@ function backup_volumes(){
         container_name="${i}"
         _nice_output "$container_name - "
         mkdir -p "${backup_path}/${container_name}"
+        container_image=$(docker inspect --format='{{.Config.Image}}' "${container_name}")
 
         if docker run --rm --volumes-from "${container_name}" \
             -v "${backup_path}":/backup \
-            -e TAR_OPTS="$tar_opts" docker-backup backup \
+            -e TAR_OPTS="$tar_opts" "${container_image}" backup \
             "${container_name}/${container_name}-volume.tar.gz"
         then
             exec 3>&1 # save stdout as fd 3
